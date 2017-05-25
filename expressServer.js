@@ -1,6 +1,12 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+
+
+app.use(morgan());
+app.use(bodyParser());
 
 app.get('/pets', (req, res)=>{
   res.status(200);
