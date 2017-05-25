@@ -24,12 +24,12 @@ router.get('/:id',(req,res,next) => {
     var dataArr = JSON.parse(data);
     console.log(dataArr);
     if(req.params.id > dataArr.length - 1){
-      res.type('text/plain; charset=utf-8');
-      res.status(404);
-      res.send('Not Found');
+      // res.type('text/plain; charset=utf-8');
+      // res.status(404);
+      res.sendStatus(404);
     }
     else{
-      res.type('application/json');
+      // res.type('application/json');
       res.send(dataArr[req.params.id]);
     }
   });
@@ -37,28 +37,26 @@ router.get('/:id',(req,res,next) => {
 
 router.post('/',(req,res,next) => {
   if (!validateData(req.body)){
-    res.status(400)
-    res.type('text/plain; charset=utf-8');
-    res.send('Bad Request');
-    // next();
+    res.sendStatus(400);
   }
-  fs.readFile('pets.json', 'utf8', function(err, data){
-    let file = JSON.parse(data);
-    file.push(req.body);
-    let string = JSON.stringify(file);
-    fs.writeFile('pets.json', string, function(err){
-      if (err){
-        res.type('text/plain; charset=utf-8');
-        res.status(500);
-        res.send('cannot write')
-      }
-      // console.log(req.body);
+  else{
+    fs.readFile('pets.json', 'utf8', function(err, data){
+      let file = JSON.parse(data);
+      file.push(req.body);
+      let string = JSON.stringify(file);
+      fs.writeFile('pets.json', string, function(err){
+        // if (err){
+        //   res.type('text/plain; charset=utf-8');
+        //   res.status(500);
+        //   res.send('cannot write')
+        // }
+        // // console.log(req.body);
+      });
     });
-  });
-  res.status(200);
-  res.type('application/json');
-  res.send(req.body);
-
+    res.status(200);
+    // res.type('application/json');
+    res.send(req.body);
+  }
 });
 
 router.put('/:id',(req,res,next) => {
@@ -66,7 +64,17 @@ router.put('/:id',(req,res,next) => {
 });
 
 router.patch('/:id',(req,res,next) => {
-  res.send("PARTIAL UPDATE ONE NAMED " + req.params.id);
+  fs.readFile('pets.json', 'utf8', function(err, data){
+    let file = JSON.parse(data);
+    let currentPet = file[req.params.id];
+    for (let key in req.body){
+       currentPet[key] = req.body[key];
+    }
+    let string = JSON.stringify(file);
+    fs.writeFile('pets.json', string, function(err){
+      res.send(currentPet);
+    });
+  });
 });
 
 router.delete('/:id',(req,res,next) => {
