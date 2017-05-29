@@ -20,7 +20,9 @@ router.get('/:id',(req,res,next) => {
     }
     var dataArr = JSON.parse(data);
     if(req.params.id > (dataArr.length-1) || req.params.id < 0){
-      res.sendStatus(404);
+      // res.sendStatus(404);
+      // res.status(404);
+      next();
     }
     else{
       res.send(dataArr[req.params.id]);
